@@ -1,0 +1,35 @@
+name: wf-ci
+
+env:
+  DOCKERHUB_ID: 'armck'
+
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  setup-env:
+    runs-on: ubuntu-24.04
+    outputs:
+      dockerhub_id: ${{ steps.env.outputs.dockerhub_id }}
+    steps:
+      - name: Setup environment variables
+        id: env
+        run: |
+          echo "dockerhub_id=$DOCKERHUB_ID" >> "$GITHUB_OUTPUT"
+  
+  container-build-and-push:
+    uses: armckinney/cicd/.github/workflows/rwf-container-build-and-push.yaml@main
+    needs: setup-env
+    with:
+      dockerhub_id: ${{ needs.setup-env.outputs.dockerhub_id }}
+    secrets:
+      DOCKER_HUB_ACCESS_TOKEN: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
