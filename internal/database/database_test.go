@@ -20,7 +20,7 @@ func TestHealth(t *testing.T) {
 
 	// Case 1: Healthy
 	mock.ExpectPing()
-	// Mock stats if needed, but sqlmock doesn't mock sql.DB.Stats() return values directly 
+	// Mock stats if needed, but sqlmock doesn't mock sql.DB.Stats() return values directly
 	// because Stats() calls internal runtime stats which we can't easily set via sqlmock.
 	// However, the `Health` function calls `s.db.Stats()`.
 	// Since `sqlmock` creates a real `*sql.DB` around a mocked driver, `Stats()` returns zero values initially.
@@ -36,7 +36,7 @@ func TestHealth(t *testing.T) {
 
 	// Case 2: Unhealthy (Ping fails)
 	mock.ExpectPing().WillReturnError(errors.New("db down"))
-	
+
 	statsv2 := s.Health()
 	if statsv2["status"] != "down" {
 		t.Errorf("expected status 'down', got '%s'", statsv2["status"])
@@ -69,10 +69,10 @@ func TestClose(t *testing.T) {
 	}
 }
 
-// Teststats logic requires manipulating the sql.DB state which is hard with just sqlmock 
-// because OpenConnections etc are internal counters. 
-// We generally assume stdlib works and test our logic around the values. 
-// To strictly test the threshold logic (e.g. > 40 connections), we would need 
-// to wrap the `Stats()` call in an interface or validly simulate load, 
-// which is complex for a unit test. 
+// Teststats logic requires manipulating the sql.DB state which is hard with just sqlmock
+// because OpenConnections etc are internal counters.
+// We generally assume stdlib works and test our logic around the values.
+// To strictly test the threshold logic (e.g. > 40 connections), we would need
+// to wrap the `Stats()` call in an interface or validly simulate load,
+// which is complex for a unit test.
 // For now, the basic Health check covers the main connectivity path.

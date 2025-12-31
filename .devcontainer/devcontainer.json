@@ -5,7 +5,7 @@
 	],
 	"service": "devcontainer",
 	"workspaceFolder": "/workspaces/template-go",
-	"postCreateCommand": "cd $WORKSPACE && ./tests/db/setup.sh",
+	"postCreateCommand": "cd $WORKSPACE",
 	"customizations": {
 		"vscode": {
 			"settings": {
