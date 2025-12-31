@@ -53,6 +53,6 @@ go.sum.lock
 *.cover
 coverage.out
 
-# Environment variables
+# Environment variables - exclude test env
 .env
-.env.local
+!.env.test

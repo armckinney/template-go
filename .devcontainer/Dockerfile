@@ -19,14 +19,16 @@ RUN mkdir /tmp/container \
     && cd /tmp/container \
     # installs
     && apt update && apt install -y --no-install-recommends \
-        ca-certificates \
-        curl \
-        wget \
-        git \
-        build-essential \
-        pkg-config \
-        unzip \
+    ca-certificates \
+    curl \
+    wget \
+    git \
+    build-essential \
+    pkg-config \
+    unzip \
+    postgresql-client \
     # install go
+    && rm -rf /usr/local/go \
     && wget -q "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" -O go.tar.gz \
     && tar -C /usr/local -xzf go.tar.gz \
     && rm go.tar.gz \

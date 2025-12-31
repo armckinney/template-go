@@ -1,9 +1,9 @@
 ---
-description: Rebuild devcontainer for the current project
+description: Wipe devcontainer without cache by removing containers and images
 ---
 
 // turbo-all
-1. Stop the dev container and remove it
+1. Stop the dev container, remove volumes, and remove associated images
 ```bash
 docker compose -p template-go_devcontainer -f .devcontainer/docker-compose.yaml down --volumes --rmi all
 ```

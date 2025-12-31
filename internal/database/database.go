@@ -4,19 +4,19 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"log"
+	"log/slog"
 	"os"
 	"strconv"
 	"time"
 
 	_ "github.com/jackc/pgx/v5/stdlib"
-	_ "github.com/joho/godotenv/autoload"
 )
 
 // Service represents a service that interacts with a database.
 type Service interface {
 	Health() map[string]string
 	Close() error
+	GetDB() *sql.DB
 }
 
 type service struct {
@@ -24,20 +24,26 @@ type service struct {
 }
 
 var (
-	dburl      = os.Getenv("DB_URL")
+	dburl      string
 	dbInstance *service
 )
 
-func New() Service {
+func (s *service) GetDB() *sql.DB {
+	return s.db
+}
+
+func New(connectionString string) Service {
 	// Reuse Connection
 	if dbInstance != nil {
 		return dbInstance
 	}
 
+	dburl = connectionString
 	db, err := sql.Open("pgx", dburl)
 	if err != nil {
 		// This will not be a connection error, but a DSN parse error or similar
-		log.Fatal(err)
+		slog.Error("Unable to parse DSN", "error", err)
+		os.Exit(1)
 	}
 
 	dbInstance = &service{
@@ -59,7 +65,7 @@ func (s *service) Health() map[string]string {
 	if err != nil {
 		stats["status"] = "down"
 		stats["error"] = fmt.Sprintf("db down: %v", err)
-		log.Fatalf(fmt.Sprintf("db down: %v", err)) // Log fatal error
+		slog.Error("db down", "error", err) // Log error but don't crash
 		return stats
 	}
 
@@ -97,6 +103,6 @@ func (s *service) Health() map[string]string {
 }
 
 func (s *service) Close() error {
-	log.Printf("Disconnected from database: %s", dburl)
+	slog.Info("Disconnected from database", "url", dburl)
 	return s.db.Close()
 }

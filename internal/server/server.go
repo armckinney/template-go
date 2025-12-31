@@ -3,28 +3,25 @@ package server
 import (
 	"fmt"
 	"net/http"
-	"os"
-	"strconv"
 	"time"
 
-	_ "github.com/joho/godotenv/autoload"
-
 	"example.com/template-go/internal/database"
+	"example.com/template-go/internal/handlers"
+	"example.com/template-go/internal/middleware"
+	"example.com/template-go/internal/repository"
 )
 
 type Server struct {
-	port int
-	db   database.Service
+	port     int
+	db       database.Service
+	userRepo repository.UserRepository
 }
 
-func NewServer() *http.Server {
-	port, _ := strconv.Atoi(os.Getenv("PORT"))
-	if port == 0 {
-		port = 8080
-	}
+func NewServer(port int, db database.Service, userRepo repository.UserRepository) *http.Server {
 	NewServer := &Server{
-		port: port,
-		db:   database.New(),
+		port:     port,
+		db:       db,
+		userRepo: userRepo,
 	}
 
 	// Declare Server config
@@ -37,4 +34,19 @@ func NewServer() *http.Server {
 	}
 
 	return server
+}
+
+func (s *Server) RegisterRoutes() http.Handler {
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("/", handlers.HelloWorld)
+	mux.HandleFunc("/health", handlers.Health(s.db))
+	mux.HandleFunc("/concurrency", handlers.Concurrency)
+
+	userHandler := &handlers.UserHandler{Repo: s.userRepo}
+	// Use method matching for Go 1.22+
+	mux.HandleFunc("GET /users", userHandler.GetAll)
+	mux.HandleFunc("POST /users", userHandler.Create)
+
+	return middleware.Logger(mux)
 }
