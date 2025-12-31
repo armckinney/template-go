@@ -18,11 +18,11 @@ RUN mkdir /tmp/container \
     && cd /tmp/container \
     # indirect installs
     && apt update && apt install -y --no-install-recommends \
-        wget \
-        build-essential \
+    wget \
+    build-essential \
     # installs
     && apt install -y \
-        postgresql-client \
+    postgresql-client \
     # install go
     && curl -L "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" | tar -C /usr/local -xz \
     # cleanup
@@ -32,6 +32,10 @@ RUN mkdir /tmp/container \
     && rm -rf /tmp/container
 
 WORKDIR ${WORKSPACE}
+
+# install go dependencies
+COPY go.mod go.sum ./
+RUN go mod download
 
 # restore dialog for interactive use
 ENV DEBIAN_FRONTEND=dialog
