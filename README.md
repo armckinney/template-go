@@ -10,12 +10,13 @@ This is a template for a Go API project. It follows a standard directory structu
 
 ## Prerequisites
 
-- Go 1.21+
+- Go 1.25+
 - Docker (for database)
 
 ## Getting Started
 
 1. **Clone the repository** (if not already done).
+
 
 2. **Environment Variables**:
     The application looks for a `.env` file (loaded via `godotenv`). You can create one based on your needs.
@@ -23,17 +24,15 @@ This is a template for a Go API project. It follows a standard directory structu
 
     ```env
     PORT=8080
-    DB_URL=postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable
+    DB_URL=postgres://postgres:postgres@localhost:5432/templatedb?sslmode=disable
     ```
 
     *Note: The project uses `github.com/joho/godotenv` to auto-load `.env` files locally.*
 
 3. **Run the Database**:
-    Use the Makefile to start a Postgres container.
-
-    ```bash
-    make docker-run
-    ```
+    If you are running within the provided Devcontainer, a PostgreSQL instance is already running and configured (service `devdatabase`).
+    
+    If running locally without the Devcontainer, ensure you have a PostgreSQL instance running and update `DB_URL` accordingly.
 
 4. **Run the Application**:
 
@@ -51,10 +50,10 @@ This is a template for a Go API project. It follows a standard directory structu
 
 - `make build`: Build the binary.
 - `make run`: Run the application.
-- `make docker-run`: Start the Postgres database in Docker.
-- `make docker-down`: Stop and remove the database container.
-- `make test`: Run tests.
-- `make watch`: Run with live reload (requires `air`).
+- `make test`: Run tests (includes database setup).
+- `make lint`: Run linters (`gofmt` and `go vet`).
+- `make fmt`: Format code (`go fmt`).
+- `make watch`: Run with live reload (uses `air`).
 - `make clean`: Clean up artifacts.
 
 ## Dependencies
