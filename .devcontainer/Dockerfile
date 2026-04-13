@@ -1,12 +1,4 @@
-FROM armck/ubuntu:24.04
-
-LABEL   deployable="false" \
-    description="Development container for template-go; includes Go toolchain and common Go tools."
-
-ARG GO_VERSION=1.25.0
-
-ENV GOPATH=/go
-ENV PATH=/usr/local/go/bin:${GOPATH}/bin:${PATH}
+FROM ghcr.io/armckinney/go:1.25.0
 
 ARG WORKSPACE=/workspaces/template-go
 ENV WORKSPACE=${WORKSPACE}
@@ -17,14 +9,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN mkdir /tmp/container \
     && cd /tmp/container \
     # indirect installs
-    && apt update && apt install -y --no-install-recommends \
-    wget \
-    build-essential \
+    && apt update \
     # installs
     && apt install -y \
-    postgresql-client \
-    # install go
-    && curl -L "https://go.dev/dl/go${GO_VERSION}.linux-$(dpkg --print-architecture).tar.gz" | tar -C /usr/local -xz \
+        postgresql-client \
     # cleanup
     && apt autoremove -y \
     && apt clean -y \

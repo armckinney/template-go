@@ -35,10 +35,11 @@
 			},
 			"extensions": [
 				"ms-azuretools.vscode-docker",
-				"shd101wyy.markdown-preview-enhanced",
+				"yzhang.markdown-all-in-one",
+				"bierner.markdown-mermaid",
 				"github.vscode-github-actions",
-				"ms-vscode.makefile-tools",
-				"golang.go"
+				"golang.go",
+				"ms-vscode.makefile-tools"
 			]
 		}
 	}
